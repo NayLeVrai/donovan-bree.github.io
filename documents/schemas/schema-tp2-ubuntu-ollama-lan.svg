@@ -62,9 +62,10 @@
     <text x="180" y="278" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-size="10" fill="#ccfbf1">Adresse exemple : 10.11.11.10/16</text>
   </g>
 
-  <line x1="380" y1="342" x2="440" y2="168" stroke="#64748b" stroke-width="3"/>
-  <line x1="510" y1="168" x2="520" y2="168" stroke="#64748b" stroke-width="3"/>
-  <line x1="520" y1="168" x2="640" y2="240" stroke="#64748b" stroke-width="3"/>
+  <!-- Liaisons physique / segment logique -->
+  <path d="M 470 336 L 480 172 L 580 312" stroke="#64748b" stroke-width="3" fill="none" stroke-linejoin="round"/>
+  <circle cx="480" cy="172" r="5" fill="#475569"/>
+  <text x="480" y="190" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="8" fill="#64748b">LAN</text>
 
   <g filter="url(#tp2-sh)" transform="translate(580, 212)">
     <rect width="300" height="200" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
