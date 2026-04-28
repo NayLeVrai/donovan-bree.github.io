@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 580" role="img" aria-labelledby="tp1-title tp1-desc">
+  <title id="tp1-title">Schema TP1 - Reseau logique centre assistance, inventaire et supervision</title>
+  <desc id="tp1-desc">Vue logique : hyperviseur, VM GLPI, OCS, Zabbix, poste Windows avec agent ; flux HTTP(S) et remontees inventaire.</desc>
+  <defs>
+    <linearGradient id="tp1-zone" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f1f5f9"/>
+      <stop offset="100%" style="stop-color:#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="tp1-card" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#f8fafc"/>
+    </linearGradient>
+    <filter id="tp1-ds" width="112%" height="112%" x="-6%" y="-6%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.1"/>
+    </filter>
+    <marker id="tp1-mk" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#0d9488"/>
+    </marker>
+    <marker id="tp1-mk-g" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#fdfdfd"/>
+  <text x="500" y="34" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="18" font-weight="700" fill="#0f172a">TP n&#176;1 &#8212; Centre d&apos;assistance, inventaire OCS, supervision Zabbix</text>
+  <text x="500" y="56" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="12" fill="#64748b">Sch&#233;ma logique r&#233;seau (aligner les IP sur ton compte-rendu avant impression)</text>
+
+  <rect x="44" y="76" width="912" height="414" rx="16" fill="url(#tp1-zone)" stroke="#cbd5e1" stroke-width="1.25"/>
+  <text x="500" y="102" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="13" font-weight="600" fill="#0f766e">R&#233;seau interne du TP (ex. 10.x.x.x/24 ou VLAN labouratoire)</text>
+
+  <g filter="url(#tp1-ds)">
+    <rect x="70" y="130" width="268" height="148" rx="12" fill="url(#tp1-card)" stroke="#bae6fd" stroke-width="1.25"/>
+    <rect x="70" y="130" width="268" height="38" rx="12" fill="#0d9488"/>
+    <text x="204" y="154" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff">VM : GLPI (LAMP, tickets)</text>
+    <text x="84" y="188" font-family="Segoe UI, system-ui, sans-serif" font-size="11" fill="#334155">Apache + PHP + MariaDB</text>
+    <text x="84" y="208" font-family="Segoe UI, system-ui, sans-serif" font-size="11" fill="#334155">Interface gestion incidents</text>
+    <text x="84" y="248" font-family="ui-monospace, Consolas, monospace" font-size="10" fill="#0f766e">IP exemple : 10.0.10.10</text>
+  </g>
+
+  <g filter="url(#tp1-ds)">
+    <rect x="366" y="130" width="268" height="148" rx="12" fill="url(#tp1-card)" stroke="#bae6fd" stroke-width="1.25"/>
+    <rect x="366" y="130" width="268" height="38" rx="12" fill="#0f766e"/>
+    <text x="500" y="154" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff">VM : serveur OCS Inventory</text>
+    <text x="380" y="188" font-family="Segoe UI, system-ui, sans-serif" font-size="11" fill="#334155">Base inventaire, console web</text>
+    <text x="380" y="208" font-family="Segoe UI, system-ui, sans-serif" font-size="11" fill="#334155">R&#233;ception des agents</text>
+    <text x="380" y="248" font-family="ui-monospace, Consolas, monospace" font-size="10" fill="#0f766e">IP exemple : 10.0.10.20</text>
+  </g>
+
+  <g filter="url(#tp1-ds)">
+    <rect x="662" y="130" width="268" height="148" rx="12" fill="url(#tp1-card)" stroke="#bae6fd" stroke-width="1.25"/>
+    <rect x="662" y="130" width="268" height="38" rx="12" fill="#134e4a"/>
+    <text x="796" y="154" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff">VM : Zabbix (supervision)</text>
+    <text x="676" y="188" font-family="Segoe UI, system-ui, sans-serif" font-size="11" fill="#334155">Serveur, h&#244;tes, mod&#232;les</text>
+    <text x="676" y="208" font-family="Segoe UI, system-ui, sans-serif" font-size="11" fill="#334155">Alertes et tableaux de bord</text>
+    <text x="676" y="248" font-family="ui-monospace, Consolas, monospace" font-size="10" fill="#0f766e">IP exemple : 10.0.10.30</text>
+  </g>
+
+  <g filter="url(#tp1-ds)">
+    <rect x="662" y="308" width="268" height="118" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="1.25" stroke-dasharray="5 4"/>
+    <rect x="662" y="308" width="268" height="34" rx="12" fill="#475569"/>
+    <text x="796" y="330" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff">Poste Windows, agent OCS</text>
+    <text x="676" y="364" font-family="Segoe UI, system-ui, sans-serif" font-size="11" fill="#334155">Remont&#233;e inventaire vers serveur OCS</text>
+    <text x="676" y="396" font-family="ui-monospace, Consolas, monospace" font-size="10" fill="#64748b">IP exemple : 10.0.10.100</text>
+  </g>
+
+  <path d="M 796 308 L 500 278" stroke="#0d9488" stroke-width="2.5" fill="none" marker-end="url(#tp1-mk)"/>
+  <rect x="548" y="244" width="284" height="24" rx="5" fill="#ecfdf5" stroke="#0d9488"/>
+  <text x="690" y="260" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="9.5" font-weight="600" fill="#0f766e">Flux agents &#8594; inventaire centralis&#233;</text>
+
+  <g filter="url(#tp1-ds)">
+    <rect x="70" y="308" width="268" height="118" rx="12" fill="#fffbeb" stroke="#fbbf24" stroke-width="1.25"/>
+    <text x="204" y="338" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" fill="#92400e">Administrateur (navigateur)</text>
+    <text x="84" y="364" font-family="Segoe UI, system-ui, sans-serif" font-size="11" fill="#78350f">Acc&#232;s aux interfaces web des services</text>
+    <text x="84" y="384" font-family="Segoe UI, system-ui, sans-serif" font-size="11" fill="#78350f">HTTPS ou HTTP selon configuration TP</text>
+  </g>
+
+  <path d="M 338 350 L 190 298" stroke="#0d9488" stroke-width="2" fill="none" marker-end="url(#tp1-mk)"/>
+  <path d="M 338 360 L 500 298" stroke="#0d9488" stroke-width="2" fill="none" marker-end="url(#tp1-mk)"/>
+  <path d="M 338 370 L 810 298" stroke="#0d9488" stroke-width="2" fill="none" marker-end="url(#tp1-mk)"/>
+  <text x="360" y="292" font-family="Segoe UI, system-ui, sans-serif" font-size="9" fill="#0f766e" font-weight="600">HTTP(S) vers interfaces</text>
+
+  <path d="M 680 278 Q 420 250 204 210" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="8 6" fill="none" marker-end="url(#tp1-mk-g)"/>
+  <path d="M 720 278 Q 530 248 440 218" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="8 6" fill="none" marker-end="url(#tp1-mk-g)"/>
+  <text x="456" y="232" font-family="Segoe UI, system-ui, sans-serif" font-size="9.2" fill="#64748b" font-weight="600">Supervision Zabbix (m&#233;triques / agents selon config)</text>
+
+  <rect x="44" y="498" width="912" height="66" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+  <circle cx="64" cy="528" r="5" fill="#0d9488"/>
+  <text x="78" y="532" font-family="Segoe UI, system-ui, sans-serif" font-size="10.5" fill="#475569">L&#233;gende : hyperviseur (VirtualBox, VMware...), VM Linux sauf poste Windows. Remplacer les IP par ton plan d&apos;adressage r&#233;el.</text>
+  <text x="78" y="550" font-family="Segoe UI, system-ui, sans-serif" font-size="10.5" fill="#64748b">Les adresses 10.0.10.x sont fournies &#224; titre d&apos;exemple.</text>
+</svg>
