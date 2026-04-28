@@ -1,0 +1,277 @@
+/* Page « formulaire » tableau U4 — fond blanc, bordures noires, proche du document officiel */
+
+:root {
+  --form-border: #000;
+  --form-bg: #fff;
+  --section-bg: #d9d9d9;
+  --form-text: #000;
+  --form-font: Arial, Helvetica, "Segoe UI", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body.tableau-page {
+  margin: 0;
+  padding: 1rem 1rem 2rem;
+  font-family: var(--form-font);
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--form-text);
+  background: #e8e8e8;
+}
+
+.tableau-page .back-nav {
+  max-width: 1200px;
+  margin: 0 auto 1rem;
+  font-size: 13px;
+}
+
+.tableau-page .back-nav a {
+  color: #0645ad;
+}
+
+.tableau-page .sheet {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--form-bg);
+  padding: 14px 16px 20px;
+  border: 1px solid #999;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@media print {
+  body.tableau-page {
+    background: #fff;
+    padding: 0;
+  }
+
+  .tableau-page .back-nav {
+    display: none;
+  }
+
+  .tableau-page .sheet {
+    border: none;
+    box-shadow: none;
+    padding: 8px;
+  }
+}
+
+/* ——— En-tête candidat ——— */
+.candidate-box {
+  border: 2px solid var(--form-border);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.candidate-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+
+.candidate-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.candidate-field label {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.candidate-field .value-line {
+  flex: 1;
+  min-width: 120px;
+  border-bottom: 1px solid var(--form-border);
+  min-height: 1.2em;
+}
+
+.candidate-field-full {
+  grid-column: 1 / -1;
+}
+
+.option-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 6px;
+}
+
+.option-row label {
+  font-weight: 700;
+}
+
+.checkbox-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 12px;
+  font-weight: 400;
+}
+
+.checkbox-box {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--form-border);
+  text-align: center;
+  line-height: 10px;
+  font-weight: 700;
+  font-size: 11px;
+}
+
+/* ——— Tableau ——— */
+.matrix {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border: 2px solid var(--form-border);
+}
+
+.matrix th,
+.matrix td {
+  border: 1px solid var(--form-border);
+  vertical-align: top;
+  padding: 4px 5px;
+}
+
+/* Première colonne : réalisations */
+.matrix .col-real {
+  width: 26%;
+  text-align: left;
+  font-size: 10.5px;
+}
+
+/* Colonne période */
+.matrix .col-period {
+  width: 5.5%;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 9.5px;
+  padding: 4px 2px;
+}
+
+.matrix .period-vertical {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: center;
+  white-space: normal;
+  max-height: 220px;
+  margin: 0 auto;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+}
+
+/* En-tête diagonal */
+.matrix .diag-head {
+  padding: 0;
+  width: 26%;
+  height: 160px;
+  position: relative;
+  background: var(--form-bg);
+  overflow: hidden;
+}
+
+.matrix .diag-line {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top right,
+    transparent calc(50% - 0.75px),
+    var(--form-border) calc(50% - 0.75px),
+    var(--form-border) calc(50% + 0.75px),
+    transparent calc(50% + 0.75px)
+  );
+  pointer-events: none;
+}
+
+.matrix .diag-text-bl {
+  position: absolute;
+  left: 6px;
+  bottom: 7px;
+  right: 52%;
+  font-size: 9px;
+  font-weight: 400;
+  text-align: left;
+  line-height: 1.25;
+  z-index: 1;
+}
+
+.matrix .diag-text-tr {
+  position: absolute;
+  right: 6px;
+  top: 7px;
+  left: 52%;
+  font-size: 9px;
+  font-weight: 400;
+  text-align: right;
+  line-height: 1.25;
+  z-index: 1;
+}
+
+/* Colonnes compétences */
+.matrix .comp-head {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-align: center;
+  vertical-align: top;
+  padding: 5px 4px;
+  line-height: 1.2;
+}
+
+.matrix .comp-head .comp-title {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 10px;
+}
+
+.matrix .comp-head ul {
+  margin: 0;
+  padding: 0 0 0 1.15em;
+  font-weight: 400;
+  font-size: 9px;
+  text-align: left;
+  line-height: 1.4;
+  list-style-position: outside;
+}
+
+.matrix .comp-head li {
+  margin-bottom: 3px;
+  padding-left: 0.2em;
+}
+
+.matrix .comp-head li::marker {
+  font-size: 1.25em;
+  color: var(--form-text);
+}
+
+/* Section grisée */
+.matrix .section-head td {
+  background: var(--section-bg);
+  font-weight: 700;
+  font-size: 10.5px;
+  text-align: left;
+  padding: 6px 8px;
+}
+
+/* Cases à cocher compétences */
+.matrix .mark {
+  text-align: center;
+  vertical-align: middle;
+  width: 7.4%;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 6px 2px;
+}
+
+.matrix .mark:empty::before {
+  content: "";
+}

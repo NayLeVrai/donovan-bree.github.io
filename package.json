@@ -1,0 +1,11 @@
+{
+  "name": "portoflio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "pdf:compte-rendu": "node scripts/html-to-pdf.mjs"
+  },
+  "devDependencies": {
+    "puppeteer": "^24.8.0"
+  }
+}

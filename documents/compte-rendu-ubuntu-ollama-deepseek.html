@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Compte-rendu — Ubuntu Server, OpenSSH, Ollama &amp; DeepSeek</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --border: #ccc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      line-height: 1.5;
+      color: var(--text);
+      max-width: 55rem;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+    }
+    h1 { font-size: 1.55rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.2rem; margin: 2rem 0 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.25rem; }
+    h3 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; }
+    p, li { font-size: 0.95rem; margin: 0.4rem 0; }
+    .meta { color: var(--muted); font-size: 0.9rem; margin-top: 0; }
+    kbd, code, pre { font-family: Consolas, "JetBrains Mono", monospace; font-size: 0.86em; }
+    pre {
+      background: #f6f6f6;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+    }
+    .summary {
+      background: #f0f7ff;
+      border-left: 4px solid #2563eb;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0 1.5rem;
+    }
+    .summary strong { display: block; margin-bottom: 0.25rem; }
+    figure.capture {
+      margin: 1rem 0 1.5rem;
+    }
+    figure.capture img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    figcaption {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+    @media print {
+      body { max-width: none; padding: 0.8cm; }
+      h2 { break-after: avoid; }
+      figure.capture { break-inside: avoid; }
+      a[href] { color: var(--text); text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Compte-rendu — Mise en place d’un serveur Ubuntu (OpenSSH) et d’Ollama / DeepSeek</h1>
+  <p class="meta">BTS SIO — SISR &amp; usage projet SLAM (API locale) — travaux pratiques</p>
+
+  <h2>Contexte</h2>
+  <p>
+    Installation d’<strong>Ubuntu Server</strong> (version <strong>sans interface graphique</strong>), puis
+    du service <strong>OpenSSH</strong> pour administration à distance. Paramètres réseau cibles :
+  </p>
+  <ul>
+    <li>Adresse IP : <strong>10.11.11.10/16</strong></li>
+    <li>Passerelle : <strong>10.11.0.1</strong></li>
+    <li>DNS : <strong>10.10.0.1</strong></li>
+    <li>Compte principal : <strong>admin1</strong> (mot de passe : <strong>Admin1</strong>)</li>
+  </ul>
+  <p>
+    Cette machine sert de plateforme pour héberger localement une version de <strong>DeepSeek</strong> via
+    <strong>Ollama</strong>. Objectif : permettre aux SISR d’envisager du <abbr title="Retrieval Augmented Generation">RAG</abbr>
+    sur le matériel des salles (S2, S4) et aux SLAM d’appeler une IA par <strong>API</strong> sans abonnement externe.
+  </p>
+
+  <h2>Vérification matérielle / stockage</h2>
+  <p>
+    <strong>Contrôle du RAID 5 :</strong> vérification que le stockage cible le mode souhaité
+    (interface matérielle, puis pendant l’installation <strong>Subiquity / Curtin</strong> notamment
+    via la prise en charge <strong>mdadm</strong> — <em>cf. figure 2</em> : ligne
+    <code>configuring raid (mdadm) service</code> dans le journal d’installation).
+  </p>
+
+  <h2>Étape 1 — Installation Ubuntu Server et service OpenSSH</h2>
+  <p>
+    Installation depuis une <strong>clé USB bootable</strong> (serveur <strong>HPE ProLiant</strong>) :
+    choix de la base <strong>Ubuntu Server</strong> (pas la variante <em>minimisée</em> afin d’avoir
+    un serveur prêt à l’emploi), partitionnement (LVM, etc. selon l’installateur), puis
+    mises à jour de paquets et enfin vérification / démarrage d’<strong>OpenSSH</strong>.
+  </p>
+
+  <figure class="capture">
+    <img src="../img/tp2/01.png" alt="Choix du type d’installation Ubuntu Server" width="1000" />
+    <figcaption>Figure 1 — Assistant Subiquity : choix de la base <strong>Ubuntu Server</strong> (installation standard, non minimisée).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/02.png" alt="Journal d’installation, Curtin, mdadm" width="1000" />
+    <figcaption>Figure 2 — <strong>Installation du système</strong> (Curtin) : partitions, LVM, et mise en service du service <code>mdadm</code> (stack RAID côté logiciel) pendant l’install.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/03.png" alt="Démarrage HPE ProLiant" width="1000" />
+    <figcaption>Figure 3 — Démarrage matériel sur <strong>ProLiant</strong> (écran d’init POST / boot).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/04.png" alt="Progression mises à jour paquets" width="1000" />
+    <figcaption>Figure 4 — Téléchargement / configuration de paquets (dépôts <em>noble</em> — Ubuntu 24.04) avec barre de progression (ex. <code>apt</code> / mises à jour post-installation).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/05.png" alt="Statut du service ssh inactif" width="1000" />
+    <figcaption>Figure 5 — <code>systemctl status ssh</code> : service <strong>inactif (dead)</strong> et <strong>disabled</strong> avant intervention.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/06.png" alt="Démarrage et activation de ssh" width="1000" />
+    <figcaption>Figure 6 — <code>systemctl start ssh</code> puis <code>systemctl enable ssh</code> (symlinks de démarrage automatique) ; <code>sshd</code> à l’écoute sur le port 22.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/07.png" alt="Service ssh actif après restart" width="1000" />
+    <figcaption>Figure 7 — <code>systemctl restart ssh</code> puis vérification : <strong>active (running)</strong>, service <code>enabled</code>.</figcaption>
+  </figure>
+
+  <div class="summary">
+    <strong>Résumé — Étape 1</strong>
+    <p>Ubuntu Server a été installé sur le matériel physique via clé USB bootable, la pile réseau a été préparée
+    (IP statique : voir consignes), <strong>OpenSSH</strong> a été installé et le compte <strong>admin1</strong> créé
+    (mot de passe : Admin1). Le service SSH a été démarré, activé au boot et vérifié.</p>
+  </div>
+
+  <h2>Étape 2 — Paire de clés SSH, dossier <code>~/.ssh</code> et <code>authorized_keys</code></h2>
+  <p>
+    Premières tentatives (souvent en <code>root</code>) : <code>ssh-keygen</code> (clé <strong>ed25519</strong> par
+    défaut) avec chemin cible = répertoire seul — erreur <code>Is a directory</code> ; <code>cat
+    id_rsa.pub &gt;&gt; authorized_keys</code> — fichier manquant. En compte <strong>admin1</strong>, l’adresse
+    <code>10.11.11.10</code> apparaît sur l’interface <code>eno2np1</code> (fig. 9). Ensuite : création de
+    <code>/home/admin1/.ssh</code> en <code>chmod 700</code>, génération de la paire avec un
+    <strong>chemin de fichier explicite</strong>, alimentation de <code>authorized_keys</code> et
+    <code>ls -l</code> (figures 10 et 11).
+  </p>
+  <p>
+    Erreur usuelle tant que la paire n’existe pas :
+    <code>cat: /home/admin1/.ssh/id_rsa.pub: No such file or directory</code>.
+  </p>
+
+  <figure class="capture">
+    <img src="../img/tp2/08.png" alt="Tentative ssh-keygen et erreurs" width="1000" />
+    <figcaption>Figure 8 — <code>ssh-keygen</code> (sauvegarde sur un <strong>dossier</strong> au lieu d’un fichier) ; puis <code>cat id_rsa.pub &gt;&gt; authorized_keys</code> : fichier absent (mauvais choix d’algorithme / clé non créée).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/09.png" alt="Session admin1, mkdir .ssh, chmod 700" width="1000" />
+    <figcaption>Figure 9 — Compte <strong>admin1</strong> (adresse <strong>10.11.11.10/16</strong> visible) : <code>mkdir -p /home/admin1/.ssh</code> et <code>chmod 700 /home/admin1/.ssh</code> ; vérification <code>whoami</code> / <code>HOME</code>.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/10.png" alt="Génération forcée du chemin des clés" width="1000" />
+    <figcaption>Figure 10 — Régénération de la paire de clés en forçant le <strong>chemin</strong> cible.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/11.png" alt="authorized_keys et ls -l .ssh" width="1000" />
+    <figcaption>Figure 11 — Mise en place de <code>authorized_keys</code> et contrôle côté serveur (<code>ls -l</code> : présence des trois fichiers attendus).</figcaption>
+  </figure>
+
+  <div class="summary">
+    <strong>Résumé — Étape 2</strong>
+    <p>Paire de clés SSH générée pour <strong>admin1</strong>, <code>authorized_keys</code> alimenté,
+    <strong>permissions</strong> sécurisées. Le service SSH est opérationnel côté serveur ; le test client complet
+    sera effectué lorsque le poste client sera sur le <strong>même réseau</strong>.</p>
+  </div>
+
+  <h2>Étape 3 — Ollama et modèle DeepSeek (CPU)</h2>
+  <p>
+    <strong>Ollama</strong> installé, unité <code>systemd</code> active, API exposée en local sur
+    <code>127.0.0.1:11434</code>. Fonctionnement en <strong>CPU uniquement</strong>, cohérent avec le matériel.
+    Téléchargement volumineux du modèle <strong>DeepSeek</strong>, lancement en ligne de commande, tests de dialogue ;
+    sortie avec <kbd>Ctrl</kbd> + <kbd>D</kbd>.
+  </p>
+
+  <figure class="capture">
+    <img src="../img/tp2/12.png" alt="Ollama service actif" width="1000" />
+    <figcaption>Figure 12 — Ollama installé, service <code>systemd</code> actif, API <code>127.0.0.1:11434</code>.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/13.png" alt="Téléchargement DeepSeek" width="1000" />
+    <figcaption>Figure 13 — Téléchargement du modèle DeepSeek (plusieurs Go).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/14.png" alt="Test DeepSeek en CLI" width="1000" />
+    <figcaption>Figure 14 — Lancement de DeepSeek après téléchargement ; tests d’échange ; quitter avec <kbd>Ctrl</kbd> + <kbd>D</kbd>.</figcaption>
+  </figure>
+
+  <h2>Étape 4 — Ouvrir l’API Ollama sur l’adresse du serveur (override systemd)</h2>
+  <p>
+    Par défaut, Ollama n’écoute que <code>127.0.0.1</code>. Mise en place d’un
+    <strong>override</strong> systemd, par ex. :</p>
+  <pre>sudo mkdir -p /etc/systemd/system/ollama.service.d
+sudo nano /etc/systemd/system/ollama.service.d/override.conf</pre>
+  <p>
+    Fichier d’override typique (variable selon la version) pour lier l’écoute à l’interface du serveur, par exemple
+    (contenu reprenant la capture) :
+  </p>
+  <pre>[Service]
+Environment="OLLAMA_HOST=0.0.0.0:11434"</pre>
+
+  <figure class="capture">
+    <img src="../img/tp2/15.png" alt="Fichier override ollama" width="1000" />
+    <figcaption>Figure 15 — Contenu du répertoire <code>ollama.service.d</code> / <code>override.conf</code> (comme sur la capture).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/16.png" alt="Redémarrage ollama" width="1000" />
+    <figcaption>Figure 16 — Rechargement de la config systemd et <strong>redémarrage</strong> du service Ollama.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/17.png" alt="Port 11434 ouvert" width="1000" />
+    <figcaption>Figure 17 — Vérification que le <strong>port 11434</strong> est bien en écoute.</figcaption>
+  </figure>
+
+  <h2>Étape 5 — Pare-feu, SSH en local puis tests réseau</h2>
+  <p>Autorisation de SSH dans le pare-feu (ex. <code>ufw</code>), rechargement / redémarrage du service, test
+  <code>ssh admin1@localhost</code>, puis depuis un <strong>client</strong> : ping et connexion SSH.</p>
+
+  <figure class="capture">
+    <img src="../img/tp2/18.png" alt="ufw et ssh local" width="1000" />
+    <figcaption>Figure 18 — Pare-feu (SSH), redémarrage SSH, test local <code>ssh admin1@localhost</code>.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/19.png" alt="Ping et SSH depuis client" width="1000" />
+    <figcaption>Figure 19 — Depuis un PC client : ping du serveur et connexion SSH (validation du chemin réseau).</figcaption>
+  </figure>
+
+  <h2>Étape 6 — Clé SSH côté client et intégration sur le serveur</h2>
+  <p>
+    Génération de la clé sur le <strong>poste client</strong>, affichage de la <strong>clé publique</strong> pour
+    copie sur le serveur. Correction d’une erreur (mauvaise clé collée), puis ajout de la <strong>bonne clé
+    sur la deuxième ligne</strong> de <code>~/.ssh/authorized_keys</code>, correctifs des
+    <strong>droits</strong> (fichier et répertoires), ajustement éventuel de
+    <code>/etc/ssh/sshd_config</code>, redémarrage de SSH et dernière vérification des permissions.
+  </p>
+
+  <figure class="capture">
+    <img src="../img/tp2/20.png" alt="Génération clé client" width="1000" />
+    <figcaption>Figure 20 — Génération de la paire de clés sur le <strong>PC client</strong>.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/21.png" alt="Clé publique client" width="1000" />
+    <figcaption>Figure 21 — Affichage de la clé <strong>publique</strong> côté client (copie vers le serveur).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/22.png" alt="Mauvaise clé" width="1000" />
+    <figcaption>Figure 22 — Identification / correction d’une <strong>clé erronée</strong> (sélection de la bonne clé publique).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/23.png" alt="authorized_keys ligne 2" width="1000" />
+    <figcaption>Figure 23 — Ajout de la clé autorisée sur la <strong>deuxième ligne</strong> de <code>authorized_keys</code>.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/24.png" alt="Chmod authorized_keys" width="1000" />
+    <figcaption>Figure 24 — Ajustement des <strong>chmod</strong> / propriétaires (obligatoire pour OpenSSH).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/25.png" alt="sshd_config et restart" width="1000" />
+    <figcaption>Figure 25 — Ligne(s) dans la configuration de <code>sshd</code> puis <strong>redémarrage</strong> du service SSH.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/26.png" alt="Vérification droits" width="1000" />
+    <figcaption>Figure 26 — Dernière vérification des <strong>droits</strong> sur <code>~/.ssh</code> et clés.</figcaption>
+  </figure>
+
+  <h2>Étape 7 — DeepSeek / Ollama accessibles sur le réseau (client)</h2>
+  <p>
+    Vérification de l’écoute de l’API ; ajout d’une ligne dans la section <code>[Service]</code> du fichier
+    <code>/etc/systemd/system/ollama.service</code> si la configuration a été complétée en complément
+    (selon la capture) ; rechargement et redémarrage des services.
+  </p>
+  <p>
+    Test HTTP depuis le client (réponse <strong>JSON</strong> attendue). Le pare-feu bloquait initialement :
+    ouverture explicite avec <code>sudo ufw allow 11434/tcp</code> puis <code>sudo ufw reload</code>.
+  </p>
+
+  <figure class="capture">
+    <img src="../img/tp2/27.png" alt="Vérification API" width="1000" />
+    <figcaption>Figure 27 — Vérification que l’<strong>API Ollama</strong> est bien à l’écoute.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/28.png" alt="ollama.service ligne supplémentaire" width="1000" />
+    <figcaption>Figure 28 — Ajout de la dernière ligne dans <code>[Service]</code> du unit file <code>ollama.service</code> (contenu = capture).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/29.png" alt="Redémarrage services" width="1000" />
+    <figcaption>Figure 29 — <code>systemctl daemon-reload</code> / redémarrage des services Ollama.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/30.png" alt="Test JSON client" width="1000" />
+    <figcaption>Figure 30 — Test API depuis le <strong>client</strong> : réception JSON (après ouverture UFW sur 11434/tcp).</figcaption>
+  </figure>
+
+  <div class="summary">
+    <strong>Résumé — Étape 7</strong>
+    <p>Le serveur héberge <strong>DeepSeek</strong> via <strong>Ollama</strong>. L’<strong>API HTTP</strong> est
+    exposée sur le réseau (IP du serveur) et atteignable depuis les postes clientes, ce qui ouvre l’intégration
+    (SLAM, scripts) <strong>sans abonnement</strong> externe.</p>
+  </div>
+
+  <h2>Étape 8 — Consolidation, reboot et correction Netplan</h2>
+  <p>
+    Vérification du redémarrage propre (<code>sudo reboot</code>) et de l’état des services
+    (<code>systemctl status</code> sur <code>ollama</code> et <code>ssh</code> selon besoin).
+  </p>
+  <p>
+    Problème constaté : <strong>plus d’IPv4</strong> après reboot, interfaces <strong>down</strong> (commande
+    <code>ip a</code>, ping KO). Dépôt netplan : <code>ls /etc/netplan</code>, édition du fichier YAML concerné
+    <code>sudo nano /etc/netplan/*.yaml</code>, application avec <code>sudo netplan generate</code> et
+    <code>sudo netplan apply</code> (ou équivalent), puis vérification <code>ip a</code> et
+    <code>ip route</code> pour <strong>10.11.11.10/16</strong> et la passerelle.
+  </p>
+  <p>Exemple de structure attendue (à adapter exactement sur la forme de votre interface, ex. <code>ens18</code>) :</p>
+  <pre>network:
+  version: 2
+  ethernets:
+    ensXX:
+      addresses: [10.11.11.10/16]
+      routes:
+        - to: default
+          via: 10.11.0.1
+      nameservers:
+        addresses: [10.10.0.1]</pre>
+
+  <figure class="capture">
+    <img src="../img/tp2/31.png" alt="reboot systemctl" width="1000" />
+    <figcaption>Figure 31 — <code>sudo reboot</code> et contrôles <code>systemctl</code> (Ollama, SSH, etc.).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/32.png" alt="Fichier netplan édition" width="1000" />
+    <figcaption>Figure 32 — Fichier netplan modifié (contenu d’abord effacé puis réécrit ; aligné sur la capture) ; constat d’<strong>absence d’IPv4</strong> via <code>ip a</code> après boot.</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/33.png" alt="Interfaces down" width="1000" />
+    <figcaption>Figure 33 — État <strong>down</strong> des interfaces, pas d’IP, pas de connectivité (ping KO).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/34.png" alt="Nano netplan" width="1000" />
+    <figcaption>Figure 34 — Correction du <code>*.yaml</code> sous <code>/etc/netplan</code> (câblage IP / passerelle / DNS).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/35.png" alt="netplan apply et ip a" width="1000" />
+    <figcaption>Figure 35 — <code>netplan generate/apply</code> ; vérification <code>ip a</code> (adresse <strong>10.11.11.10/16</strong>) et <code>ip route</code>.</figcaption>
+  </figure>
+
+  <h2>Étape 9 — Interface web (Apache)</h2>
+  <p>
+    Insertion d’une <strong>clé USB</strong> contenant les fichiers de l’interface, montage du périphérique,
+    installation d’<strong>Apache2</strong>, copie (ou déplacement) des fichiers de l’interface dans
+    <code>/var/www/html</code> afin d’en faire le <strong>document root</strong> du site par défaut.
+  </p>
+
+  <figure class="capture">
+    <img src="../img/tp2/36.png" alt="Montage clé USB et préparation" width="1000" />
+    <figcaption>Figure 36 — Clé USB insérée, montage du volume et accès aux fichiers de l’interface web (chemin, <code>ls</code> ou équivalent selon la capture).</figcaption>
+  </figure>
+  <figure class="capture">
+    <img src="../img/tp2/37.png" alt="Apache et répertoire web" width="1000" />
+    <figcaption>Figure 37 — <strong>Apache2</strong> installé / service actif, fichiers de l’interface déployés dans <code>/var/www/html</code> (vérification côté serveur).</figcaption>
+  </figure>
+
+  <h2>Conclusion</h2>
+  <p>
+    Le serveur <strong>Ubuntu</strong> fournit <strong>SSH</strong> sécurisé (clés, pare-feu), héberge
+    <strong>Ollama / DeepSeek</strong> en local avec <strong>API</strong> joignable sur le LAN, et peut servir
+    une <strong>interface web</strong> légère via Apache. Cette base permet aux travaux SISR / SLAM d’itérer
+    sur le RAG et les appels API sans dépendre d’un fournisseur payant, sous réserve de la charge CPU et
+    d’une politique de sauvegarde / supervision adaptées.
+  </p>
+</body>
+</html>
