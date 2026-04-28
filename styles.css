@@ -445,6 +445,10 @@ a:hover {
   padding: 0;
 }
 
+.doc-list > li + li {
+  margin-top: 0.55rem;
+}
+
 .doc-link {
   display: flex;
   align-items: center;
